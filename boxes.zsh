@@ -68,25 +68,56 @@ _make_infobox() {
     print -rn -- "$reset_color"
   }
 
+  local _draw_top_left
+  _draw_top_left () {
+    print -rn -- "$top[left]"
+    print -rn -- "$inner[top]"
+  }
+
+  local _draw_top_mid
+  _draw_top_mid () {
+    local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
+    repeat $total_width; do print -rn "$top[mid]"; done
+  }
+
+  local _draw_top_right
+  _draw_top_right () {
+    print -- "$top[right]"
+  }
+
   local _header
   _header() {
     _set_colors
-    print -rn -- "$top[left]"
-    print -rn -- "$inner[top]"
-    local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
-    repeat $total_width; do print -rn "$top[mid]"; done
-    print -- "$top[right]"
+    _draw_top_left 
+    _draw_top_mid
+    _draw_top_right
     _reset_colors
   }
+
+  local _draw_bot_left
+  _draw_bot_left () {
+    print -rn -- "$bot[left]"
+    print -rn -- "$inner[bot]"
+  }
+
+  local _draw_bot_mid
+  _draw_bot_mid () {
+    local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
+    repeat $total_width; do print -rn "$bot[mid]"; done
+  }
+
+  local _draw_bot_right
+  _draw_bot_right () {
+    print -- "$bot[right]"
+  }
+
 
   local _footer
   _footer() {
     _set_colors
-    print -rn -- "$bot[left]"
-    print -rn -- "$inner[bot]"
-    local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
-    repeat $total_width; do print -rn "$bot[mid]"; done
-    print -- "$bot[right]"
+    _draw_bot_left 
+    _draw_bot_mid
+    _draw_bot_right
     _reset_colors
   }
 
