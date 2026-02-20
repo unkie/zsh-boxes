@@ -27,25 +27,22 @@ _make_infobox() {
   # default spacing on the left and right of each line.
   local -x line_spacing=1
 
-  # box drawing chars
-  local -A top
-  local -A mid
-  local -A bot
-  local -A inner
-  top[left]="▗█"
-  top[right]="▜█▖"
-  top[mid]="▀"
-  bot[left]="▝█"
-  bot[right]="▟█▘"
-  bot[mid]="▄"
-  mid[left]="▐█"
-  mid[right]="█▌"
-  inner[top]="██"
-  inner[mid]="█▌"
-  inner[bot]="██"
+  local -Ax chars
+  chars[left,top]="▗█"
+  chars[left,bot]="▝█"
+  chars[right,top]="▜█▖"
+  chars[right,bot]="▟█▘"
+  chars[spacer,top]="██"
+  chars[spacer,mid]="█▌"
+  chars[spacer,bot]="██"
+  chars[edge,left]="▐█"
+  chars[edge,top]="▀"
+  chars[edge,bot]="▄"
+  chars[edge,right]="█▌"
+
   # otherstyle
-  #top[right]="▜█"
-  #bot[right]="▟█"
+  #$chars[right,top]="▜█"
+  #$chars[right,bot]="▟█"
 
   # read options and lines
   while [[ $# -gt 0 ]]; do
@@ -68,55 +65,48 @@ _make_infobox() {
     print -rn -- "$reset_color"
   }
 
-  local _draw_top_left
-  _draw_top_left () {
-    print -rn -- "$top[left]"
-    print -rn -- "$inner[top]"
+  _draw_corner () {
+    local row=$1 col=$2
+    print -rn -- "$chars[$col,$row]"
   }
 
-  local _draw_top_mid
-  _draw_top_mid () {
+  _draw_horizontal_edge () {
+    local row=$1
     local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
-    repeat $total_width; do print -rn "$top[mid]"; done
+    repeat $total_width; do print -rn "$chars[edge,$row]"; done
   }
 
-  local _draw_top_right
-  _draw_top_right () {
-    print -- "$top[right]"
+  _draw_vertical_edge () {
+    local col=$1
+    print -rn -- "$chars[spacer,$col]$chars[edge,$col]"
   }
+
+  _draw_top_left () { _draw_corner top left }
+  _draw_top_right () { _draw_corner top right; print }
+  _draw_bot_left () { _draw_corner bot left }
+  _draw_bot_right () { _draw_corner bot right; print }
+
+  _draw_bot_edge () { _draw_horizontal_edge bot }
+  _draw_top_edge () { _draw_horizontal_edge top }
+  _draw_left_edge () { _draw_vertical_edge left }
+  _draw_right_edge () { _draw_vertical_edge right }
 
   local _header
   _header() {
     _set_colors
     _draw_top_left 
-    _draw_top_mid
+    print -rn -- "$chars[spacer,top]"
+    _draw_top_edge
     _draw_top_right
     _reset_colors
   }
-
-  local _draw_bot_left
-  _draw_bot_left () {
-    print -rn -- "$bot[left]"
-    print -rn -- "$inner[bot]"
-  }
-
-  local _draw_bot_mid
-  _draw_bot_mid () {
-    local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
-    repeat $total_width; do print -rn "$bot[mid]"; done
-  }
-
-  local _draw_bot_right
-  _draw_bot_right () {
-    print -- "$bot[right]"
-  }
-
 
   local _footer
   _footer() {
     _set_colors
     _draw_bot_left 
-    _draw_bot_mid
+    print -rn -- "$chars[spacer,bot]"
+    _draw_bot_edge
     _draw_bot_right
     _reset_colors
   }
@@ -153,8 +143,12 @@ _make_infobox() {
   _line() {
     line=$(_fit_line "$@")
     _set_colors
-    print -- "$mid[left]$inner[mid]$line$mid[right]"
-    _reset_colors 
+    _draw_left_edge
+    print -rn -- "$chars[spacer,mid]"
+    print -rn -- "$line"
+    _draw_right_edge
+    _reset_colors
+    print
   }
 
   local -x max_width=$(_max_width "${lines[@]}")
