@@ -2,6 +2,23 @@
 autoload -Uz colors
 colors
 
+
+_define_box_style_simple () {
+  style=(
+    left,top "╔"
+    left,bot "╚"
+    right,top "╗"
+    right,bot "╝"
+    spacer,top "╤"
+    spacer,mid "│"
+    spacer,bot "╧"
+    edge,left "║"
+    edge,top "═"
+    edge,bot "═"
+    edge,right "║"
+  )
+}
+
 _define_box_style_fancy () {
   style=(
     left,top "▗█"
