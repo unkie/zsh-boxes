@@ -2,6 +2,26 @@
 autoload -Uz colors
 colors
 
+_define_box_style_fancy () {
+  style=(
+    left,top "▗█"
+    left,bot "▝█"
+    right,top "▜█▖"
+    right,bot "▟█▘"
+    spacer,top "██"
+    spacer,mid "█▌"
+    spacer,bot "██"
+    edge,left "▐█"
+    edge,top "▀"
+    edge,bot "▄"
+    edge,right " █▌"
+  )
+  # other style
+  #right,top "▜█"
+  #right,bot "▟█"
+}
+
+
 # Draw a box into a array of lines
 #
 # Usage:
@@ -27,23 +47,6 @@ _make_infobox() {
   # default spacing on the left and right of each line.
   local -x line_spacing=1
 
-  local -Ax chars
-  chars[left,top]="▗█"
-  chars[left,bot]="▝█"
-  chars[right,top]="▜█▖"
-  chars[right,bot]="▟█▘"
-  chars[spacer,top]="██"
-  chars[spacer,mid]="█▌"
-  chars[spacer,bot]="██"
-  chars[edge,left]="▐█"
-  chars[edge,top]="▀"
-  chars[edge,bot]="▄"
-  chars[edge,right]="█▌"
-
-  # otherstyle
-  #$chars[right,top]="▜█"
-  #$chars[right,bot]="▟█"
-
   # read options and lines
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -67,18 +70,18 @@ _make_infobox() {
 
   _draw_corner () {
     local row=$1 col=$2
-    print -rn -- "$chars[$col,$row]"
+    print -rn -- "$style[$col,$row]"
   }
 
   _draw_horizontal_edge () {
     local row=$1
-    local total_width="$(( max_width + ($line_spacing * 2) - 1 ))"
-    repeat $total_width; do print -rn "$chars[edge,$row]"; done
+    local total_width="$(( max_width + ($line_spacing * 2) ))"
+    repeat $total_width; do print -rn "$style[edge,$row]"; done
   }
 
   _draw_vertical_edge () {
     local col=$1
-    print -rn -- "$chars[spacer,$col]$chars[edge,$col]"
+    print -rn -- "$style[spacer,$col]$style[edge,$col]"
   }
 
   _draw_top_left () { _draw_corner top left }
@@ -95,7 +98,7 @@ _make_infobox() {
   _header() {
     _set_colors
     _draw_top_left 
-    print -rn -- "$chars[spacer,top]"
+    print -rn -- "$style[spacer,top]"
     _draw_top_edge
     _draw_top_right
     _reset_colors
@@ -105,7 +108,7 @@ _make_infobox() {
   _footer() {
     _set_colors
     _draw_bot_left 
-    print -rn -- "$chars[spacer,bot]"
+    print -rn -- "$style[spacer,bot]"
     _draw_bot_edge
     _draw_bot_right
     _reset_colors
@@ -144,7 +147,7 @@ _make_infobox() {
     line=$(_fit_line "$@")
     _set_colors
     _draw_left_edge
-    print -rn -- "$chars[spacer,mid]"
+    print -rn -- "$style[spacer,mid]"
     print -rn -- "$line"
     _draw_right_edge
     _reset_colors
@@ -267,17 +270,18 @@ _draw_box_at() {
 
 local -a box
 
-box=("${(@f)$(_make_infobox "i1" "l1" "i2" "l2.")}")
-_draw_box "${box[@]}"
+#box=("${(@f)$(_make_infobox "i1" "l1" "i2" "l2.")}")
+#_draw_box "${box[@]}"
 
+local -Ax style
+
+_define_box_style_simple
 box=("${(@f)$(_make_infobox "host °zqf°" "user::zqf")}")
 _draw_box "${box[@]}"
 
-# echo
-# box=("${(@f)$(_make_infobox -line-spacing 0)}")
-# _draw_box "${box[@]}"
-
-echo
+_define_box_style_fancy 
+box=("${(@f)$(_make_infobox "host °zqf°" "user::zqf")}")
+_draw_box "${box[@]}"
 
 txt=("${(@f)$(~/Downloads/hyprtxt/hyprtxt 'zsh-boxes')}")
 box=("${(@f)$(_make_infobox -line-spacing 3 "${txt[@]}")}")
