@@ -349,12 +349,12 @@ local -a box
 local -Ax style
 
 _define_box_style_simple
-box=("${(@f)$(_make_infobox -cb "$fg[green]" -icons "" "$fg[yellow]host °zqf°" "" "user::zqf")}")
+box=("${(@f)$(_make_infobox -cb "$fg[green]" -icons "" "$fg[yellow]hello world" "" "dlrow olleh")}")
 _draw_box "${box[@]}"
 echo
 
 _define_box_style_fancy 
-box=("${(@f)$(_make_infobox -cb "$fg[magenta]" -cr "$fg[blue]" -icons "" "host °zqf°" "" "user::zqf")}")
+box=("${(@f)$(_make_infobox -cb "$fg[magenta]" -cr "$fg[blue]" -icons "" "$(uname -sn)" "" "zsh $ZSH_VERSION")}")
 _draw_box "${box[@]}"
 echo
 
@@ -364,7 +364,7 @@ _draw_box "${box[@]}"
 echo
 
 box=("${(@f)$(_make_infobox -cb "$fg[yellow]" -cr "$fg[yellow]" -sr 1 123 456 789 " 0 #")}")
-_draw_box_at 8 17 "${box[@]}"
+_draw_box_at 8 18 "${box[@]}"
 #
 # box=("${(@f)$(_make_infobox -fg "$fg[yellow]" -line-spacing 3 "${fg[blue]}blue")}")
 # _draw_box_at 8 40 "${box[@]}"
