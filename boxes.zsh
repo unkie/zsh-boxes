@@ -8,11 +8,13 @@ _define_box_style_simple () {
     le,top "╔"
     le,mid "║"
     le,bot "╚"
+    lp,spc 1
     lp,top "═"
     lp,bot "═"
     sp,top "╤"
     sp,mid "│"
     sp,bot "╧"
+    rp,spc 1
     rp,top "═"
     rp,bot "═"
     re,top "╗"
@@ -26,11 +28,13 @@ _define_box_style_fancy () {
     le,top "▗█"
     le,mid "▐█"
     le,bot "▝█"
+    lp,spc 0
     lp,top "█"
     lp,bot "█"
     sp,top "██"
     sp,mid "█▌"
     sp,bot "██"
+    rp,spc 1
     rp,top "▀"
     rp,bot "▄"
     re,top "▜█▖"
@@ -120,13 +124,13 @@ _make_infobox() {
   local _draw_sp_mid () { _draw_lr_edge sp,mid }
   local _draw_sp_bot () { _draw_lr_edge sp,bot }
 
-  local _draw_lp_top () { _draw_lr_panel_tb $max_lp_width 0 lp,top }
+  local _draw_lp_top () { _draw_lr_panel_tb $max_lp_width $style[lp,spc] lp,top }
   local _draw_lp_mid () { print -rn -- "$1" }
-  local _draw_lp_bot () { _draw_lr_panel_tb $max_lp_width 0 lp,bot }
+  local _draw_lp_bot () { _draw_lr_panel_tb $max_lp_width $style[lp,spc] lp,bot }
 
-  local _draw_rp_top () { _draw_lr_panel_tb $max_rp_width $line_spacing rp,top }
+  local _draw_rp_top () { _draw_lr_panel_tb $max_rp_width $style[rp,spc] rp,top }
   local _draw_rp_mid () { print -rn -- "$1" }
-  local _draw_rp_bot () { _draw_lr_panel_tb $max_rp_width $line_spacing rp,bot }
+  local _draw_rp_bot () { _draw_lr_panel_tb $max_rp_width $style[rp,spc] rp,bot }
 
   local _draw_header () {
     _set_colors
@@ -184,9 +188,9 @@ _make_infobox() {
   local _draw_line () {
     _set_colors
     _draw_le_mid
-    _draw_lp_mid "$(_fit_to_width $max_lp_width 0 "$1")"
+    _draw_lp_mid "$(_fit_to_width $max_lp_width ${style[lp,spc]} "$1")"
     _draw_sp_mid
-    _draw_rp_mid "$(_fit_to_width $max_rp_width $line_spacing "$2")"
+    _draw_rp_mid "$(_fit_to_width $max_rp_width ${style[rp,spc]} "$2")"
     _draw_re_mid
     _reset_colors
     print
