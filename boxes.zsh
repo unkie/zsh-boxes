@@ -6,32 +6,36 @@ colors
 _define_box_style_simple () {
   style=(
     le,top "╔"
+    le,mid "║"
     le,bot "╚"
-    re,top "╗"
-    re,bot "╝"
+    lp,top "═"
+    lp,bot "═"
     sp,top "╤"
     sp,mid "│"
     sp,bot "╧"
-    le,mid "║"
     rp,top "═"
     rp,bot "═"
+    re,top "╗"
     re,mid "║"
+    re,bot "╝"
   )
 }
 
 _define_box_style_fancy () {
   style=(
     le,top "▗█"
+    le,mid "▐█"
     le,bot "▝█"
-    re,top "▜█▖"
-    re,bot "▟█▘"
+    lp,top "█"
+    lp,bot "█"
     sp,top "██"
     sp,mid "█▌"
     sp,bot "██"
-    le,mid "▐█"
     rp,top "▀"
     rp,bot "▄"
+    re,top "▜█▖"
     re,mid " █▌"
+    re,bot "▟█▘"
   )
   # other style
   #re,top "▜█"
@@ -98,51 +102,58 @@ _make_infobox() {
     print -rn -- "$reset_color"
   }
 
-  _draw_corner () {
+  _draw_lr_edge () {
     print -rn -- "$style[$1]"
   }
 
-  _draw_horizontal_edge () {
-    local total_width="$(( box_max_width + ($line_spacing * 2) ))"
-    repeat $total_width; do print -rn "$style[$1]"; done
+  _draw_lr_panel_tb () {
+    local total_width="$(( $1 ))"
+    #echo "tw: $1, mlw: $max_line_width"
+    repeat $total_width; do print -rn "$style[$2]"; done
   }
 
-  _draw_vertical_edge () {
-    print -rn -- "$style[$1]"
-  }
+  _draw_le_top () { _draw_lr_edge le,top }
+  _draw_le_mid () { _draw_lr_edge le,mid }
+  _draw_le_bot () { _draw_lr_edge le,bot }
 
-  _draw_le_top () { _draw_corner le,top }
-  _draw_re_top () { _draw_corner re,top }
-  _draw_le_bot () { _draw_corner le,bot }
-  _draw_re_bot () { _draw_corner re,bot }
+  _draw_re_top () { _draw_lr_edge re,top }
+  _draw_re_mid () { _draw_lr_edge re,mid }
+  _draw_re_bot () { _draw_lr_edge re,bot }
 
-  _draw_lp_top () { _draw_horizontal_edge rp,top }
-  _draw_lp_bot () { _draw_horizontal_edge rp,bot }
-  _draw_rp_top () { _draw_horizontal_edge rp,top }
-  _draw_rp_bot () { _draw_horizontal_edge rp,bot }
-  _draw_le_mid () { _draw_vertical_edge le,mid }
-  _draw_re_mid () { _draw_vertical_edge re,mid }
+  _draw_sp_top () { _draw_lr_edge sp,top }
+  _draw_sp_mid () { _draw_lr_edge sp,mid }
+  _draw_sp_bot () { _draw_lr_edge sp,bot }
 
-  local _header
-  _header() {
+  _draw_lp_top () { _draw_lr_panel_tb $max_icon_width lp,top }
+  _draw_lp_mid () { print -rn -- "$(_fit_icon "$1")" }
+  _draw_lp_bot () { _draw_lr_panel_tb $max_icon_width lp,bot }
+
+  _draw_rp_top () { _draw_lr_panel_tb $((max_line_width+(line_spacing*2))) rp,top }
+  _draw_rp_mid () { print -rn -- "$(_fit_line "$1")" }
+  _draw_rp_bot () { _draw_lr_panel_tb $((max_line_width+(line_spacing*2))) rp,bot }
+
+  local _draw_header
+  _draw_header() {
     _set_colors
-    _draw_le_top 
-    print -rn -- "$style[sp,top]"
+    _draw_le_top
     _draw_lp_top
+    _draw_sp_top
+    _draw_rp_top
     _draw_re_top
-    print
     _reset_colors
+    print
   }
 
-  local _footer
-  _footer() {
+  local _draw_footer
+  _draw_footer() {
     _set_colors
     _draw_le_bot 
-    print -rn -- "$style[sp,bot]"
     _draw_lp_bot
+    _draw_sp_bot
+    _draw_rp_bot
     _draw_re_bot
-    print
     _reset_colors
+    print
   }
 
   local _max_width() {
@@ -183,17 +194,13 @@ _make_infobox() {
     _fit $max_icon_width 0 "$1"
   }
 
-  local _line
-  _line() {
-    if ((use_icon)); then
-    fi
-    line=$(_fit_line "$1")
-    icon=$(_fit_icon "$2")
+  local _draw_line
+  _draw_line() {
     _set_colors
     _draw_le_mid
-    print -rn -- "$icon"
-    print -rn -- "$style[sp,mid]"
-    print -rn -- "$line"
+    _draw_lp_mid "$1"
+    _draw_sp_mid
+    _draw_rp_mid "$2"
     _draw_re_mid
     _reset_colors
     print
@@ -209,11 +216,11 @@ _make_infobox() {
     box_max_width=$max_line_width
   fi
 
-  _header $box_max_width
+  _draw_header $box_max_width
   for ((i=1; i<=${#lines}; i++)); do
-    _line "${lines[i]}" "${icons[i]}"
+    _draw_line "${icons[i]}" "${lines[i]}"
   done
-  _footer $box_max_width
+  _draw_footer $box_max_width
 
 }
 
@@ -331,10 +338,12 @@ local -Ax style
 _define_box_style_simple
 box=("${(@f)$(_make_infobox -icons "" "host °zqf°" "" "user::zqf")}")
 _draw_box "${box[@]}"
+echo
 
 _define_box_style_fancy 
 box=("${(@f)$(_make_infobox -icons "" "host °zqf°" "" "user::zqf")}")
 _draw_box "${box[@]}"
+echo
 
 txt=("${(@f)$(~/Downloads/hyprtxt/hyprtxt 'zsh-boxes')}")
 box=("${(@f)$(_make_infobox -line-spacing 3 "${txt[@]}")}")
