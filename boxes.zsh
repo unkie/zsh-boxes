@@ -26,13 +26,13 @@ _define_box_style_simple () {
 _define_box_style_fancy () {
   style=(
     le,top "▗█"
-    le,mid "▐█"
+    le,mid "▐█\e[7m"
     le,bot "▝█"
     lp,spc 0
     lp,top "█"
     lp,bot "█"
     sp,top "██"
-    sp,mid "█▌"
+    sp,mid "\e[27m█▌"
     sp,bot "██"
     rp,spc 1
     rp,top "▀"
@@ -106,7 +106,7 @@ _make_infobox() {
   }
 
   local _draw_lr_edge () {
-    print -rn -- "$style[$1]"
+    print -n -- "$style[$1]"
   }
 
   local _draw_lr_panel_tb () {
