@@ -78,7 +78,8 @@ _make_infobox() {
     case "$1" in
       -fg) box_fg="$2"; shift 2 ;;
       -bg) box_bg="$2"; shift 2 ;;
-      -line-spacing) line_spacing="$2"; shift 2 ;;
+      -sl) style[lp,spc]="$2"; shift 2 ;;
+      -sr) style[rp,spc]="$2"; shift 2 ;;
       -icons) use_icons=1; shift;;
       *) break ;;
     esac
@@ -330,7 +331,7 @@ _draw_box "${box[@]}"
 echo
 
 txt=("${(@f)$(~/Downloads/hyprtxt/hyprtxt 'zsh-boxes')}")
-box=("${(@f)$(_make_infobox -line-spacing 3 "${txt[@]}")}")
+box=("${(@f)$(_make_infobox -sr 3 "${txt[@]}")}")
 _draw_box "${box[@]}"
 echo
 
