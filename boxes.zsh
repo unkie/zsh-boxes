@@ -108,7 +108,7 @@ _make_infobox() {
 
   _draw_lr_panel_tb () {
     local total_width="$(( $1 ))"
-    #echo "tw: $1, mlw: $max_line_width"
+    #echo "tw: $1, mlw: $max_rp_width"
     repeat $total_width; do print -rn "$style[$2]"; done
   }
 
@@ -124,13 +124,13 @@ _make_infobox() {
   _draw_sp_mid () { _draw_lr_edge sp,mid }
   _draw_sp_bot () { _draw_lr_edge sp,bot }
 
-  _draw_lp_top () { _draw_lr_panel_tb $max_icon_width lp,top }
+  _draw_lp_top () { _draw_lr_panel_tb $max_lp_width lp,top }
   _draw_lp_mid () { print -rn -- "$(_fit_icon "$1")" }
-  _draw_lp_bot () { _draw_lr_panel_tb $max_icon_width lp,bot }
+  _draw_lp_bot () { _draw_lr_panel_tb $max_lp_width lp,bot }
 
-  _draw_rp_top () { _draw_lr_panel_tb $((max_line_width+(line_spacing*2))) rp,top }
+  _draw_rp_top () { _draw_lr_panel_tb $((max_rp_width+(line_spacing*2))) rp,top }
   _draw_rp_mid () { print -rn -- "$(_fit_line "$1")" }
-  _draw_rp_bot () { _draw_lr_panel_tb $((max_line_width+(line_spacing*2))) rp,bot }
+  _draw_rp_bot () { _draw_lr_panel_tb $((max_rp_width+(line_spacing*2))) rp,bot }
 
   local _draw_header
   _draw_header() {
@@ -187,11 +187,11 @@ _make_infobox() {
   }
 
   _fit_line() {
-    _fit $max_line_width $line_spacing "$1"
+    _fit $max_rp_width $line_spacing "$1"
   }
 
   _fit_icon() {
-    _fit $max_icon_width 0 "$1"
+    _fit $max_lp_width 0 "$1"
   }
 
   local _draw_line
@@ -207,13 +207,13 @@ _make_infobox() {
   }
 
 
-  local -x max_line_width=$(_max_width "${lines[@]}")
-  local -x max_icon_width=$(_max_width "${icons[@]}")
+  local -x max_lp_width=$(_max_width "${icons[@]}")
+  local -x max_rp_width=$(_max_width "${lines[@]}")
   local -x box_max_width
   if ((use_icons)); then
-    box_max_width=$(( max_line_width + max_icon_width ))
+    box_max_width=$(( max_rp_width + max_lp_width ))
   else
-    box_max_width=$max_line_width
+    box_max_width=$max_rp_width
   fi
 
   _draw_header $box_max_width
