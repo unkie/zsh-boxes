@@ -5,37 +5,37 @@ colors
 
 _define_box_style_simple () {
   style=(
-    left,top "╔"
-    left,bot "╚"
-    right,top "╗"
-    right,bot "╝"
-    spacer,top "╤"
-    spacer,mid "│"
-    spacer,bot "╧"
-    edge,left "║"
-    edge,top "═"
-    edge,bot "═"
-    edge,right "║"
+    le,top "╔"
+    le,bot "╚"
+    re,top "╗"
+    re,bot "╝"
+    sp,top "╤"
+    sp,mid "│"
+    sp,bot "╧"
+    le,mid "║"
+    rp,top "═"
+    rp,bot "═"
+    re,mid "║"
   )
 }
 
 _define_box_style_fancy () {
   style=(
-    left,top "▗█"
-    left,bot "▝█"
-    right,top "▜█▖"
-    right,bot "▟█▘"
-    spacer,top "██"
-    spacer,mid "█▌"
-    spacer,bot "██"
-    edge,left "▐█"
-    edge,top "▀"
-    edge,bot "▄"
-    edge,right " █▌"
+    le,top "▗█"
+    le,bot "▝█"
+    re,top "▜█▖"
+    re,bot "▟█▘"
+    sp,top "██"
+    sp,mid "█▌"
+    sp,bot "██"
+    le,mid "▐█"
+    rp,top "▀"
+    rp,bot "▄"
+    re,mid " █▌"
   )
   # other style
-  #right,top "▜█"
-  #right,bot "▟█"
+  #re,top "▜█"
+  #re,bot "▟█"
 }
 
 
@@ -99,36 +99,35 @@ _make_infobox() {
   }
 
   _draw_corner () {
-    local row=$1 col=$2
-    print -rn -- "$style[$col,$row]"
+    print -rn -- "$style[$1]"
   }
 
   _draw_horizontal_edge () {
     local row=$1
     local total_width="$(( box_max_width + ($line_spacing * 2) ))"
-    repeat $total_width; do print -rn "$style[edge,$row]"; done
+    repeat $total_width; do print -rn "$style[rp,$row]"; done
   }
 
   _draw_vertical_edge () {
     local col=$1
-    print -rn -- "$style[edge,$col]"
+    print -rn -- "$style[$col,mid]"
   }
 
-  _draw_top_left () { _draw_corner top left }
-  _draw_top_right () { _draw_corner top right; print }
-  _draw_bot_left () { _draw_corner bot left }
-  _draw_bot_right () { _draw_corner bot right; print }
+  _draw_top_left () { _draw_corner le,top }
+  _draw_top_right () { _draw_corner re,top; print }
+  _draw_bot_left () { _draw_corner le,bot }
+  _draw_bot_right () { _draw_corner re,bot; print }
 
   _draw_bot_edge () { _draw_horizontal_edge bot }
   _draw_top_edge () { _draw_horizontal_edge top }
-  _draw_left_edge () { _draw_vertical_edge left }
-  _draw_right_edge () { _draw_vertical_edge right }
+  _draw_left_edge () { _draw_vertical_edge le }
+  _draw_right_edge () { _draw_vertical_edge re }
 
   local _header
   _header() {
     _set_colors
     _draw_top_left 
-    print -rn -- "$style[spacer,top]"
+    print -rn -- "$style[sp,top]"
     _draw_top_edge
     _draw_top_right
     _reset_colors
@@ -138,7 +137,7 @@ _make_infobox() {
   _footer() {
     _set_colors
     _draw_bot_left 
-    print -rn -- "$style[spacer,bot]"
+    print -rn -- "$style[sp,bot]"
     _draw_bot_edge
     _draw_bot_right
     _reset_colors
@@ -191,7 +190,7 @@ _make_infobox() {
     _set_colors
     _draw_left_edge
     print -rn -- "$icon"
-    print -rn -- "$style[spacer,mid]"
+    print -rn -- "$style[sp,mid]"
     print -rn -- "$line"
     _draw_right_edge
     _reset_colors
