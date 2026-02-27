@@ -209,18 +209,12 @@ _make_infobox() {
 
   local -x max_lp_width=$(_max_width "${icons[@]}")
   local -x max_rp_width=$(_max_width "${lines[@]}")
-  local -x box_max_width
-  if ((use_icons)); then
-    box_max_width=$(( max_rp_width + max_lp_width ))
-  else
-    box_max_width=$max_rp_width
-  fi
 
-  _draw_header $box_max_width
+  _draw_header
   for ((i=1; i<=${#lines}; i++)); do
     _draw_line "${icons[i]}" "${lines[i]}"
   done
-  _draw_footer $box_max_width
+  _draw_footer
 
 }
 
