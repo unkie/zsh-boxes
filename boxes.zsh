@@ -20,6 +20,9 @@ _define_box_style_simple () {
     re,top "╗"
     re,mid "║"
     re,bot "╝"
+    col,box ""
+    col,lp ""
+    col,rp ""
   )
 }
 
@@ -40,10 +43,13 @@ _define_box_style_fancy () {
     re,top "▜█▖"
     re,mid " █▌"
     re,bot "▟█▘"
+    # other style
+    #re,top "▜█"
+    #re,bot "▟█"
+    col,box "$fg[magenta]"
+    col,lp ""
+    col,rp "$fg[blue]"
   )
-  # other style
-  #re,top "▜█"
-  #re,bot "▟█"
 }
 
 
@@ -67,8 +73,7 @@ _make_infobox() {
   local -x use_icons=0
 
   # no colors by default
-  local -x box_fg
-  local -x box_bg
+  local -x col_txt
 
   # default spacing on the left and right of each line.
   local -x line_spacing=1
@@ -76,8 +81,9 @@ _make_infobox() {
   # read options
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -fg) box_fg="$2"; shift 2 ;;
-      -bg) box_bg="$2"; shift 2 ;;
+      -cb) style[col,box]="$2"; shift 2 ;;
+      -cl) style[col,lp]="$2"; shift 2 ;;
+      -cr) style[col,rp]="$2"; shift 2 ;;
       -sl) style[lp,spc]="$2"; shift 2 ;;
       -sr) style[rp,spc]="$2"; shift 2 ;;
       -icons) use_icons=1; shift;;
@@ -97,13 +103,8 @@ _make_infobox() {
     done
   fi
 
-  local _set_colors () {
-    print -rn -- "$box_fg$box_bg"
-  }
-
-  local _reset_colors () {
-    print -rn -- "$reset_color"
-  }
+  local _set_colors () { print -rn -- "$style[col,$1]" }
+  local _reset_colors () { print -rn -- "$reset_color" }
 
   local _draw_lr_edge () {
     print -n -- "$style[$1]"
@@ -134,7 +135,7 @@ _make_infobox() {
   local _draw_rp_bot () { _draw_lr_panel_tb $max_rp_width $style[rp,spc] rp,bot }
 
   local _draw_header () {
-    _set_colors
+    _set_colors box
     _draw_le_top
     _draw_lp_top
     _draw_sp_top
@@ -145,7 +146,7 @@ _make_infobox() {
   }
 
   local _draw_footer () {
-    _set_colors
+    _set_colors box
     _draw_le_bot 
     _draw_lp_bot
     _draw_sp_bot
@@ -187,11 +188,17 @@ _make_infobox() {
 
 
   local _draw_line () {
-    _set_colors
+    _set_colors box
     _draw_le_mid
+    _set_colors lp
     _draw_lp_mid "$(_fit_to_width $max_lp_width ${style[lp,spc]} "$1")"
+    _reset_colors
+    _set_colors box
     _draw_sp_mid
+    _set_colors rp
     _draw_rp_mid "$(_fit_to_width $max_rp_width ${style[rp,spc]} "$2")"
+    _reset_colors
+    _set_colors box
     _draw_re_mid
     _reset_colors
     print
@@ -321,23 +328,22 @@ local -a box
 local -Ax style
 
 _define_box_style_simple
-box=("${(@f)$(_make_infobox -icons "" "host °zqf°" "" "user::zqf")}")
+box=("${(@f)$(_make_infobox -cb "$fg[green]" -icons "" "$fg[yellow]host °zqf°" "" "user::zqf")}")
 _draw_box "${box[@]}"
 echo
 
 _define_box_style_fancy 
-box=("${(@f)$(_make_infobox -icons "" "host °zqf°" "" "user::zqf")}")
+box=("${(@f)$(_make_infobox -cb "$fg[magenta]" -cr "$fg[blue]" -icons "" "host °zqf°" "" "user::zqf")}")
 _draw_box "${box[@]}"
 echo
 
 txt=("${(@f)$(~/Downloads/hyprtxt/hyprtxt 'zsh-boxes')}")
-box=("${(@f)$(_make_infobox -sr 3 "${txt[@]}")}")
+box=("${(@f)$(_make_infobox -sr 3 -cr "$fg[yellow]" "${txt[@]}")}")
 _draw_box "${box[@]}"
 echo
 
-# box=("${(@f)$(_make_infobox -fg "$fg[yellow]" -bg $bg[magenta] -line-spacing 3 xxx)}")
-# _draw_box "${box[@]}"
-# _draw_box_at 8 17 "${box[@]}"
+box=("${(@f)$(_make_infobox -cb "$fg[yellow]" -cr "$fg[yellow]" -sr 1 123 456 789 " 0 #")}")
+_draw_box_at 8 17 "${box[@]}"
 #
 # box=("${(@f)$(_make_infobox -fg "$fg[yellow]" -line-spacing 3 "${fg[blue]}blue")}")
 # _draw_box_at 8 40 "${box[@]}"
