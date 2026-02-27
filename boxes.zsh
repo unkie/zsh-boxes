@@ -114,9 +114,9 @@ _make_infobox() {
   }
 
   _draw_top_left () { _draw_corner le,top }
-  _draw_top_right () { _draw_corner re,top; print }
+  _draw_top_right () { _draw_corner re,top }
   _draw_bot_left () { _draw_corner le,bot }
-  _draw_bot_right () { _draw_corner re,bot; print }
+  _draw_bot_right () { _draw_corner re,bot }
 
   _draw_bot_edge () { _draw_horizontal_edge bot }
   _draw_top_edge () { _draw_horizontal_edge top }
@@ -130,6 +130,7 @@ _make_infobox() {
     print -rn -- "$style[sp,top]"
     _draw_top_edge
     _draw_top_right
+    print
     _reset_colors
   }
 
@@ -140,6 +141,7 @@ _make_infobox() {
     print -rn -- "$style[sp,bot]"
     _draw_bot_edge
     _draw_bot_right
+    print
     _reset_colors
   }
 
