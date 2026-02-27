@@ -51,11 +51,12 @@ _define_box_style_fancy () {
 #   -icons: The 
 _make_infobox() {
 
-  # array of lines / icon+lines
+  # array of lines and icon
   local -a lines
+  local -a icons
 
   # no icons by default
-  local icons=1
+  local -x use_icons=0
 
   # no colors by default
   local -x box_fg
@@ -64,16 +65,28 @@ _make_infobox() {
   # default spacing on the left and right of each line.
   local -x line_spacing=1
 
-  # read options and lines
+  # read options
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -fg) box_fg="$2"; shift 2 ;;
       -bg) box_bg="$2"; shift 2 ;;
       -line-spacing) line_spacing="$2"; shift 2 ;;
-      --) shift; break ;;
-      *) lines+=("$1"); shift ;;
+      -icons) use_icons=1; shift;;
+      *) break ;;
     esac
   done
+  # read lines
+  if ((use_icons)); then
+    while (($#>=2)); do
+      icons+=("$1"); shift;
+      lines+=("$1"); shift;
+    done
+  else
+    while [[ $# -gt 0 ]]; do
+      icons+=("")
+      lines+=("$1"); shift;
+    done
+  fi
 
   local _set_colors
   _set_colors() {
@@ -92,13 +105,13 @@ _make_infobox() {
 
   _draw_horizontal_edge () {
     local row=$1
-    local total_width="$(( max_width + ($line_spacing * 2) ))"
+    local total_width="$(( box_max_width + ($line_spacing * 2) ))"
     repeat $total_width; do print -rn "$style[edge,$row]"; done
   }
 
   _draw_vertical_edge () {
     local col=$1
-    print -rn -- "$style[spacer,$col]$style[edge,$col]"
+    print -rn -- "$style[edge,$col]"
   }
 
   _draw_top_left () { _draw_corner top left }
@@ -146,24 +159,38 @@ _make_infobox() {
     print -r -- ${#s}
   }
 
-  local _fit_line
-  _fit_line() {
-    local s="${1}"
+  local _fit
+  _fit() {
+    local max_width="$1"
+    local spacing="$2"
+    local s="$3"
     local n=$(_max_width $s)
-    print -n -- "${(l:$line_spacing:: :)}"
+    print -n -- "${(l:$spacing:: :)}"
     if (( n > $max_width )); then
       print -rn -- "${s[1,max_width]}"
     else
       print -rn -- "${s}$(printf '%*s' $((max_width-n)) '')"
     fi
-    print -r -- "${(l:$line_spacing:: :)}"
+    print -r -- "${(l:$spacing:: :)}"
+  }
+
+  _fit_line() {
+    _fit $max_line_width $line_spacing "$1"
+  }
+
+  _fit_icon() {
+    _fit $max_icon_width 0 "$1"
   }
 
   local _line
   _line() {
-    line=$(_fit_line "$@")
+    if ((use_icon)); then
+    fi
+    line=$(_fit_line "$1")
+    icon=$(_fit_icon "$2")
     _set_colors
     _draw_left_edge
+    print -rn -- "$icon"
     print -rn -- "$style[spacer,mid]"
     print -rn -- "$line"
     _draw_right_edge
@@ -171,13 +198,21 @@ _make_infobox() {
     print
   }
 
-  local -x max_width=$(_max_width "${lines[@]}")
 
-  _header $max_width
-  for x in "${lines[@]}"; do
-    _line "$x"
+  local -x max_line_width=$(_max_width "${lines[@]}")
+  local -x max_icon_width=$(_max_width "${icons[@]}")
+  local -x box_max_width
+  if ((use_icons)); then
+    box_max_width=$(( max_line_width + max_icon_width ))
+  else
+    box_max_width=$max_line_width
+  fi
+
+  _header $box_max_width
+  for ((i=1; i<=${#lines}; i++)); do
+    _line "${lines[i]}" "${icons[i]}"
   done
-  _footer $max_width
+  _footer $box_max_width
 
 }
 
@@ -293,11 +328,11 @@ local -a box
 local -Ax style
 
 _define_box_style_simple
-box=("${(@f)$(_make_infobox "host °zqf°" "user::zqf")}")
+box=("${(@f)$(_make_infobox -icons "" "host °zqf°" "" "user::zqf")}")
 _draw_box "${box[@]}"
 
 _define_box_style_fancy 
-box=("${(@f)$(_make_infobox "host °zqf°" "user::zqf")}")
+box=("${(@f)$(_make_infobox -icons "" "host °zqf°" "" "user::zqf")}")
 _draw_box "${box[@]}"
 
 txt=("${(@f)$(~/Downloads/hyprtxt/hyprtxt 'zsh-boxes')}")
