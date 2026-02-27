@@ -103,33 +103,33 @@ _make_infobox() {
   }
 
   _draw_horizontal_edge () {
-    local row=$1
     local total_width="$(( box_max_width + ($line_spacing * 2) ))"
-    repeat $total_width; do print -rn "$style[rp,$row]"; done
+    repeat $total_width; do print -rn "$style[$1]"; done
   }
 
   _draw_vertical_edge () {
-    local col=$1
-    print -rn -- "$style[$col,mid]"
+    print -rn -- "$style[$1]"
   }
 
-  _draw_top_left () { _draw_corner le,top }
-  _draw_top_right () { _draw_corner re,top }
-  _draw_bot_left () { _draw_corner le,bot }
-  _draw_bot_right () { _draw_corner re,bot }
+  _draw_le_top () { _draw_corner le,top }
+  _draw_re_top () { _draw_corner re,top }
+  _draw_le_bot () { _draw_corner le,bot }
+  _draw_re_bot () { _draw_corner re,bot }
 
-  _draw_bot_edge () { _draw_horizontal_edge bot }
-  _draw_top_edge () { _draw_horizontal_edge top }
-  _draw_left_edge () { _draw_vertical_edge le }
-  _draw_right_edge () { _draw_vertical_edge re }
+  _draw_lp_top () { _draw_horizontal_edge rp,top }
+  _draw_lp_bot () { _draw_horizontal_edge rp,bot }
+  _draw_rp_top () { _draw_horizontal_edge rp,top }
+  _draw_rp_bot () { _draw_horizontal_edge rp,bot }
+  _draw_le_mid () { _draw_vertical_edge le,mid }
+  _draw_re_mid () { _draw_vertical_edge re,mid }
 
   local _header
   _header() {
     _set_colors
-    _draw_top_left 
+    _draw_le_top 
     print -rn -- "$style[sp,top]"
-    _draw_top_edge
-    _draw_top_right
+    _draw_lp_top
+    _draw_re_top
     print
     _reset_colors
   }
@@ -137,10 +137,10 @@ _make_infobox() {
   local _footer
   _footer() {
     _set_colors
-    _draw_bot_left 
+    _draw_le_bot 
     print -rn -- "$style[sp,bot]"
-    _draw_bot_edge
-    _draw_bot_right
+    _draw_lp_bot
+    _draw_re_bot
     print
     _reset_colors
   }
@@ -190,11 +190,11 @@ _make_infobox() {
     line=$(_fit_line "$1")
     icon=$(_fit_icon "$2")
     _set_colors
-    _draw_left_edge
+    _draw_le_mid
     print -rn -- "$icon"
     print -rn -- "$style[sp,mid]"
     print -rn -- "$line"
-    _draw_right_edge
+    _draw_re_mid
     _reset_colors
     print
   }
