@@ -92,48 +92,43 @@ _make_infobox() {
     done
   fi
 
-  local _set_colors
-  _set_colors() {
+  local _set_colors () {
     print -rn -- "$box_fg$box_bg"
   }
 
-  local _reset_colors
-  _reset_colors() {
+  local _reset_colors () {
     print -rn -- "$reset_color"
   }
 
-  _draw_lr_edge () {
+  local _draw_lr_edge () {
     print -rn -- "$style[$1]"
   }
 
-  _draw_lr_panel_tb () {
-    local total_width="$(( $1 ))"
-    #echo "tw: $1, mlw: $max_rp_width"
-    repeat $total_width; do print -rn "$style[$2]"; done
+  local _draw_lr_panel_tb () {
+    repeat $(($1+($2*2))); do print -rn "$style[$3]"; done
   }
 
-  _draw_le_top () { _draw_lr_edge le,top }
-  _draw_le_mid () { _draw_lr_edge le,mid }
-  _draw_le_bot () { _draw_lr_edge le,bot }
+  local _draw_le_top () { _draw_lr_edge le,top }
+  local _draw_le_mid () { _draw_lr_edge le,mid }
+  local _draw_le_bot () { _draw_lr_edge le,bot }
 
-  _draw_re_top () { _draw_lr_edge re,top }
-  _draw_re_mid () { _draw_lr_edge re,mid }
-  _draw_re_bot () { _draw_lr_edge re,bot }
+  local _draw_re_top () { _draw_lr_edge re,top }
+  local _draw_re_mid () { _draw_lr_edge re,mid }
+  local _draw_re_bot () { _draw_lr_edge re,bot }
 
-  _draw_sp_top () { _draw_lr_edge sp,top }
-  _draw_sp_mid () { _draw_lr_edge sp,mid }
-  _draw_sp_bot () { _draw_lr_edge sp,bot }
+  local _draw_sp_top () { _draw_lr_edge sp,top }
+  local _draw_sp_mid () { _draw_lr_edge sp,mid }
+  local _draw_sp_bot () { _draw_lr_edge sp,bot }
 
-  _draw_lp_top () { _draw_lr_panel_tb $max_lp_width lp,top }
-  _draw_lp_mid () { print -rn -- "$(_fit_icon "$1")" }
-  _draw_lp_bot () { _draw_lr_panel_tb $max_lp_width lp,bot }
+  local _draw_lp_top () { _draw_lr_panel_tb $max_lp_width 0 lp,top }
+  local _draw_lp_mid () { print -rn -- "$1" }
+  local _draw_lp_bot () { _draw_lr_panel_tb $max_lp_width 0 lp,bot }
 
-  _draw_rp_top () { _draw_lr_panel_tb $((max_rp_width+(line_spacing*2))) rp,top }
-  _draw_rp_mid () { print -rn -- "$(_fit_line "$1")" }
-  _draw_rp_bot () { _draw_lr_panel_tb $((max_rp_width+(line_spacing*2))) rp,bot }
+  local _draw_rp_top () { _draw_lr_panel_tb $max_rp_width $line_spacing rp,top }
+  local _draw_rp_mid () { print -rn -- "$1" }
+  local _draw_rp_bot () { _draw_lr_panel_tb $max_rp_width $line_spacing rp,bot }
 
-  local _draw_header
-  _draw_header() {
+  local _draw_header () {
     _set_colors
     _draw_le_top
     _draw_lp_top
@@ -144,8 +139,7 @@ _make_infobox() {
     print
   }
 
-  local _draw_footer
-  _draw_footer() {
+  local _draw_footer () {
     _set_colors
     _draw_le_bot 
     _draw_lp_bot
@@ -194,8 +188,7 @@ _make_infobox() {
     _fit $max_lp_width 0 "$1"
   }
 
-  local _draw_line
-  _draw_line() {
+  local _draw_line () {
     _set_colors
     _draw_le_mid
     _draw_lp_mid "$1"
