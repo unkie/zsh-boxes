@@ -180,20 +180,13 @@ _make_infobox() {
     print -r -- "${(l:$spacing:: :)}"
   }
 
-  _fit_line() {
-    _fit $max_rp_width $line_spacing "$1"
-  }
-
-  _fit_icon() {
-    _fit $max_lp_width 0 "$1"
-  }
 
   local _draw_line () {
     _set_colors
     _draw_le_mid
-    _draw_lp_mid "$1"
+    _draw_lp_mid "$(_fit $max_lp_width 0 "$1")"
     _draw_sp_mid
-    _draw_rp_mid "$2"
+    _draw_rp_mid "$(_fit $max_rp_width $line_spacing "$2")"
     _draw_re_mid
     _reset_colors
     print
