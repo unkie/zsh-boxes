@@ -24,7 +24,7 @@ colors
 # left and right panel text.
 
 
-_define_box_style_simple () {
+_define_box_style_legacy () {
   style=(
     le,top "╔"
     le,mid "║"
@@ -47,7 +47,7 @@ _define_box_style_simple () {
   )
 }
 
-_define_box_style_fancy () {
+_define_box_style_modern () {
   style=(
     le,top "▗█"
     le,mid "▐█\e[7m"
@@ -348,12 +348,12 @@ local -a box
 
 local -Ax style
 
-_define_box_style_simple
+_define_box_style_legacy
 box=("${(@f)$(_make_infobox -cb "$fg[green]" -icons "" "$fg[yellow]hello world" "" "dlrow olleh")}")
 _draw_box "${box[@]}"
 echo
 
-_define_box_style_fancy 
+_define_box_style_modern
 box=("${(@f)$(_make_infobox -cb "$fg[magenta]" -cr "$fg[blue]" -icons "" "$(uname -sn)" "" "zsh $ZSH_VERSION")}")
 _draw_box "${box[@]}"
 echo
