@@ -22,6 +22,9 @@ colors
 # le = left edge, lp = left panel, sp = spacer, etc.
 
 
+_rev_start="\e[7m"
+_rev_end="\e[27m"
+
 _define_box_style_legacy () {
   style=(
     le,top "╔"
@@ -70,9 +73,6 @@ _define_box_style_modern () {
     col,rp "$fg[blue]"
   )
 }
-
-_rev_start="\e[7m"
-_rev_end="\e[27m"
 
 _define_box_style_flat () {
   style=(
