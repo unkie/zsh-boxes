@@ -2,7 +2,11 @@
 autoload -Uz colors
 colors
 
-# Anatomy of a box
+# Styles are defined in an associative array `style`.
+# A style must have definitions for each element of the
+# grid from the diagram below, as well as a left and
+# right panel spacing, with optional colors for the box,
+# left and right panel text.
 #
 # A box has two panels separated by a spacer.
 # To draw the panel we need a way to adress each
@@ -16,12 +20,6 @@ colors
 #    ╚   ═════   ╧   ═════   ╝ bot
 #
 # le = left edge, lp = left panel, sp = spacer, etc.
-#
-# Styles are defined in an associative array `style`.
-# A style must have definitions for each element of the
-# grid from the diagram above, as well as a left and
-# right panel spacing, with optional colors for the box
-# left and right panel text.
 
 
 _define_box_style_legacy () {
