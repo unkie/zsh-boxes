@@ -59,19 +59,72 @@ _define_box_style_modern () {
     rp,spc 1
     rp,top "▀"
     rp,bot "▄"
-    re,top "▜█▖"
+    re,top "▜█"
     re,mid " █▌"
-    re,bot "▟█▘"
+    re,bot "▟█"
     # other style
-    #re,top "▜█"
-    #re,bot "▟█"
+    #re,top "▀█▄"
+    #re,bot "▄█▀"
     col,box "$fg[magenta]"
     col,lp ""
     col,rp "$fg[blue]"
   )
 }
 
+_rev_start="\e[7m"
+_rev_end="\e[27m"
 
+_define_box_style_flat () {
+  style=(
+    le,top "▗█"
+    le,mid "▐█\e[7m"
+    le,bot "▝█"
+    lp,spc 0
+    lp,top "█"
+    lp,bot "█"
+    sp,top "█▀"
+    sp,mid "\e[27m█ "
+    sp,bot "█▄"
+    rp,spc 1
+    rp,top "$_rev_start▆$_rev_end"
+    rp,bot "▂"
+    re,top "▜█▖"
+    re,mid " █▌"
+    re,bot "▟█▘"
+    # other style
+    #re,top "▀█▄"
+    #re,bot "▄█▀"
+    col,box "$fg[magenta]"
+    col,lp ""
+    col,rp "$fg[blue]"
+  )
+}
+
+_define_box_style_round () {
+  style=(
+    le,top "▗▆"
+    le,mid "▐█\e[7m"
+    le,bot "▝$_rev_start▂$_rev_end"
+    lp,spc 0
+    lp,top "█"
+    lp,bot "█"
+    sp,top "█▛"
+    sp,mid "\e[27m█ "
+    sp,bot "█▙"
+    rp,spc 1
+    rp,top "$_rev_start▆$_rev_end"
+    rp,bot "▂"
+    re,top "▜▆▖"
+    re,mid " █▌"
+    re,bot "▟$_rev_start▂$_rev_end▘"
+    # other style
+    #re,top "▀█▄"
+    #re,bot "▄█▀"
+    col,box "$fg[magenta]"
+    col,lp ""
+    col,rp "$fg[blue]"
+  )
+}
 # Draw a box into a array of lines
 #
 # Usage:
@@ -361,8 +414,11 @@ box=("${(@f)$(_make_infobox -sr 3 -cr "$fg[yellow]" "${txt[@]}")}")
 _draw_box "${box[@]}"
 echo
 
+_define_box_style_round
 box=("${(@f)$(_make_infobox -cb "$fg[yellow]" -cr "$fg[yellow]" -sr 1 123 456 789 " 0 #")}")
 _draw_box_at 8 18 "${box[@]}"
-#
-# box=("${(@f)$(_make_infobox -fg "$fg[yellow]" -line-spacing 3 "${fg[blue]}blue")}")
-# _draw_box_at 8 40 "${box[@]}"
+
+_define_box_style_flat
+box=("${(@f)$(_make_infobox -cr "$fg[yellow]" -icons "󰋊" "space: ▰▰▰▰▰▱▱▱▱ 6/10 GiB" " " "vol  : ━━━━━━━━━───── 60%")}")
+_draw_box_at 8 40 "${box[@]}"
+
