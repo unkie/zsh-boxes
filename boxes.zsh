@@ -183,7 +183,7 @@ _make_infobox() {
   }
 
   local _draw_lr_panel_tb () {
-    repeat $(($1+($2*2))); do print -rn "$style[$3]"; done
+    repeat $(($1+($2*2))); do print -n "$style[$3]"; done
   }
 
   local _draw_le_top () { _draw_lr_edge le,top }
